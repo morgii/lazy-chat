@@ -13,10 +13,16 @@ class LazyChat:
     def connection(self, ip, port):         #establish lazychat connection
         self.ip = ip
         self.port = port
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #IPv4 and TCP connection
-        self.sock.bind((ip,port))
-        self.sock.listen(5)
-        print(f"Connected with {ip}:{port} - LazyChat listening")
+        try:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #IPv4 and TCP connection
+            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.sock.bind((ip,port))
+            self.sock.listen(5)
+            print(f"Connected with {ip}:{port} - LazyChat listening")
+        except OSError as e:
+            print(f"[Error] Failed to bind or listen on {ip}:{port} → {e}")
+        except Exception as e:
+            print(f"[Unexpected Error] During connection setup: {e}")
 
 
     #:param listeningProtocol: Type of protocol that server will understand
@@ -26,25 +32,46 @@ class LazyChat:
     def listen(self, listeningProtocol,bufferSize):
         self.listeningProtocol = listeningProtocol
         self.bufferSize = bufferSize
-        conn, addr = self.sock.accept()
+        try:
+            conn, addr = self.sock.accept()
+            print(f"Client connected from {addr}")
+        except Exception as e:
+            print(f"[Error] Accepting connection failed: {e}")
+            return
+
         while True:
-            #print(f"Connected with {addr}")
-            data = conn.recv(bufferSize)
+            try:
+                data = conn.recv(bufferSize)
+                if not data:
+                    print("Client disconnected.")
+                    break
 
-            if listeningProtocol == 'http':
-                method, path, headers, body = parsehttp.parse_http_request(data)
-                print(method, path, headers, body)
+                if listeningProtocol == 'http':
+                    try:
+                        method, path, headers, body = parsehttp.parse_http_request(data)
+                        print(method, path, headers, body)
+                    except Exception as e:
+                        print(f"[HTTP Parse Error] {e}")
 
-            elif listeningProtocol == 'lazy':
-                method, auth, json = parselazy.parse_lazy_request(data)
-                print(f'''
-                "method": {method}, 
-                "auth": {auth}, 
-                "json": {json}''')
+                elif listeningProtocol == 'lazy':
+                    try:
+                        method, auth, json = parselazy.parse_lazy_request(data)
+                        print(f'''
+                        "method": {method}, 
+                        "auth": {auth}, 
+                        "json": {json}''')
+                    except Exception as e:
+                        print(f"[Lazy Parse Error] {e}")
 
+                else:
+                    print(f"[Warning] Unknown protocol: {listeningProtocol}")
 
+            except ConnectionResetError:
+                print("Connection reset by client.")
+                break
+            except Exception as e:
+                print(f"[Error] While receiving data: {e}")
+                break
 
-
-
-
-
+        conn.close()
+        print("Connection closed.")
