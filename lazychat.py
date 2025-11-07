@@ -1,4 +1,5 @@
 import socket
+import parsehttp
 
 class LazyChat:
     def __init__(self):
@@ -17,8 +18,10 @@ class LazyChat:
         while True:
             conn, addr = self.sock.accept()
             print(f"Connected with {addr}")
-            data = conn.recv(bufferSize).decode()
-            print(data)
+            data = conn.recv(bufferSize)
+            #print(data)
+            method, path, headers, body = parsehttp.parse_http_request(data)
+            print(method, path, headers, body)
 
 
 
