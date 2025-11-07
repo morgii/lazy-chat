@@ -4,7 +4,12 @@ import parsehttp
 class LazyChat:
     def __init__(self):
         print("LazyChat activated")
-
+    
+    #:param ip: The IP address which server will listen.
+    #:type : string
+    #:param port: The port number on which the server will listen.
+    #:type port: int
+    
     def connection(self, ip, port):         #establish lazychat connection
         self.ip = ip
         self.port = port
@@ -13,6 +18,8 @@ class LazyChat:
         self.sock.listen(5)
         print(f"Connected with {ip}:{port} - LazyChat listening")
 
+    #:param bufferSize: The content wich the server will recieve
+    #:type : string
     def listen(self, bufferSize):
         self.bufferSize = bufferSize
         while True:
@@ -22,6 +29,4 @@ class LazyChat:
             #print(data)
             method, path, headers, body = parsehttp.parse_http_request(data)
             print(method, path, headers, body)
-
-
 
