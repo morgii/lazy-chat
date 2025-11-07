@@ -10,7 +10,7 @@ class LazyChat:
     #:type : string
     #:param port: The port number on which the server will listen.
     #:type port: int
-    def connection(self, ip, port):         #establish lazychat connection
+    def connection(self, ip: str, port: int):         #establish lazychat connection
         self.ip = ip
         self.port = port
         try:
@@ -29,7 +29,7 @@ class LazyChat:
     #type : string
     #:param bufferSize: The content wich the server will recieve
     #:type : int
-    def listen(self, listeningProtocol,bufferSize):
+    def listen(self, listeningProtocol: str ,bufferSize: int):
         self.listeningProtocol = listeningProtocol
         self.bufferSize = bufferSize
         try:

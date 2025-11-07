@@ -7,7 +7,7 @@ class LazyChatClient():
     #type : string
     #port: port of server
     #type : int
-    def clientConnection(self, ip, port):
+    def clientConnection(self, ip: str, port: int ):
         self.ip = ip
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # IPv4 and TCP connection
@@ -17,7 +17,7 @@ class LazyChatClient():
     #type : string
     #data : data to send
     #type : string
-    def send(self, sendProtocol, data):
+    def send(self, sendProtocol: str, data:str):
         self.sendProtocol = sendProtocol
         self.data = data
 
