@@ -22,4 +22,7 @@ class LazyChatClient():
         self.data = data
 
         if sendProtocol == 'lazy':
-            self.sock.sendall(data.encode())
+            try:
+                self.sock.sendall(data.encode())
+            except Exception as e:
+                print("[Error] error occured while sending data")
