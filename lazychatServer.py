@@ -1,5 +1,6 @@
 import socket
 import parsehttp
+import parselazy
 
 class LazyChat:
     def __init__(self):
@@ -18,23 +19,28 @@ class LazyChat:
         print(f"Connected with {ip}:{port} - LazyChat listening")
 
 
-
-    #:param listeningMode: Type of protocol that server will understand
+    #:param listeningProtocol: Type of protocol that server will understand
     #type : string
     #:param bufferSize: The content wich the server will recieve
     #:type : int
-    def listen(self, listeningMode,bufferSize):
-        self.listeningMode = listeningMode
+    def listen(self, listeningProtocol,bufferSize):
+        self.listeningProtocol = listeningProtocol
         self.bufferSize = bufferSize
+        conn, addr = self.sock.accept()
         while True:
-            conn, addr = self.sock.accept()
             print(f"Connected with {addr}")
             data = conn.recv(bufferSize)
 
-            if listeningMode == 'http':
+            if listeningProtocol == 'http':
                 method, path, headers, body = parsehttp.parse_http_request(data)
                 print(method, path, headers, body)
 
-            elif listeningMode == 'lazy':
-                print(data)
+            elif listeningProtocol == 'lazy':
+                value = parselazy.parse_lazy_request(data)
+                print(value)
+
+
+
+
+
 
