@@ -9,7 +9,6 @@ class LazyChat:
     #:type : string
     #:param port: The port number on which the server will listen.
     #:type port: int
-    
     def connection(self, ip, port):         #establish lazychat connection
         self.ip = ip
         self.port = port
@@ -18,15 +17,24 @@ class LazyChat:
         self.sock.listen(5)
         print(f"Connected with {ip}:{port} - LazyChat listening")
 
+
+
+    #:param listeningMode: Type of protocol that server will understand
+    #type : string
     #:param bufferSize: The content wich the server will recieve
-    #:type : string
-    def listen(self, bufferSize):
+    #:type : int
+    def listen(self, listeningMode,bufferSize):
+        self.listeningMode = listeningMode
         self.bufferSize = bufferSize
         while True:
             conn, addr = self.sock.accept()
             print(f"Connected with {addr}")
             data = conn.recv(bufferSize)
-            #print(data)
-            method, path, headers, body = parsehttp.parse_http_request(data)
-            print(method, path, headers, body)
+
+            if listeningMode == 'http':
+                method, path, headers, body = parsehttp.parse_http_request(data)
+                print(method, path, headers, body)
+
+            elif listeningMode == 'lazy':
+                print(data)
 
