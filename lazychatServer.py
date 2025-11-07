@@ -28,7 +28,7 @@ class LazyChat:
         self.bufferSize = bufferSize
         conn, addr = self.sock.accept()
         while True:
-            print(f"Connected with {addr}")
+            #print(f"Connected with {addr}")
             data = conn.recv(bufferSize)
 
             if listeningProtocol == 'http':
@@ -36,8 +36,12 @@ class LazyChat:
                 print(method, path, headers, body)
 
             elif listeningProtocol == 'lazy':
-                value = parselazy.parse_lazy_request(data)
-                print(value)
+                method, auth, json = parselazy.parse_lazy_request(data)
+                print(f'''
+                "method": {method}, 
+                "auth": {auth}, 
+                "json": {json}''')
+
 
 
 

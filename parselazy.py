@@ -17,5 +17,9 @@ def parse_lazy_request(raw_data: bytes):
     text = raw_data.decode('utf-8', errors='ignore')
     splitedparts = text.split('||')
 
-    return splitedparts
+    method = splitedparts[0]
+    auth = splitedparts[1]
+    json = splitedparts[2]
+
+    return method, auth, json
 
